@@ -1,7 +1,7 @@
 {
     "name": "react-personal-project",
     "version": "2.3.0",
-    "author": "Dima Vakatsiienko <d.vakatsiienko@lectrum.io>",
+    "author": "Roman Stoliarenko <r.a.stoliarenko@gmail.com>",
     "private": true,
     "scripts": {
         "start": "nodemon",
