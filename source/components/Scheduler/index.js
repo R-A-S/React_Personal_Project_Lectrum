@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 // Instruments
 import Styles from './styles.m.css';
 import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
+import { sortTasksByGroup } from '../../instruments';
 
 // Components
 import Task from "../Task";
@@ -59,7 +60,7 @@ export default class Scheduler extends Component {
         try {
             this._setTasksFetchingState(true);
             this.setState({
-                tasks: await api.fetchTasks(),
+                tasks: sortTasksByGroup(await api.fetchTasks()),
             });
             this._setTasksFetchingState(false);
         } catch (error) {
@@ -78,7 +79,7 @@ export default class Scheduler extends Component {
                 const taskApi = await api.createTask(newTaskMessage);
 
                 this.setState((prevState) => ({
-                    tasks:          [taskApi, ...prevState.tasks],
+                    tasks:          sortTasksByGroup([taskApi, ...prevState.tasks]),
                     newTaskMessage: '',
                 }));
                 this._setTasksFetchingState(false);
@@ -99,7 +100,7 @@ export default class Scheduler extends Component {
         const indexToReplace = this.state.tasks.findIndex((task) => task.id === taskApi.id);
 
         this.setState((prevState) => ({
-            tasks: prevState.tasks.map((task, i) => i === indexToReplace ? taskApi : task),
+            tasks: sortTasksByGroup(prevState.tasks.map((task, i) => i === indexToReplace ? taskApi : task)),
         }));
         this._setTasksFetchingState(false);
     };
@@ -163,14 +164,16 @@ export default class Scheduler extends Component {
 
     render () {
         const { newTaskMessage, tasksFilter, isTasksFetching, tasks } = this.state;
-        const tasksJSX = tasks.map((task) => (
-            <Task
-                key = { task.id }
-                { ...task }
-                _removeTaskAsync = { this._removeTaskAsync }
-                _updateTaskAsync = { this._updateTaskAsync }
-            />
-        ));
+        const tasksJSX = tasks.filter((task) => task.message.toLocaleLowerCase()
+            .includes(tasksFilter))
+            .map((task) => (
+                <Task
+                    key = { task.id }
+                    { ...task }
+                    _removeTaskAsync = { this._removeTaskAsync }
+                    _updateTaskAsync = { this._updateTaskAsync }
+                />
+            ));
 
         return (
             <section className = { Styles.scheduler } >
