@@ -93,7 +93,14 @@ export default class Scheduler extends Component {
     // * done
     _updateTaskAsync = async (t) => {
         this._setTasksFetchingState(true);
-        await api.updateTask(t);
+
+        const taskApi = await api.updateTask(t);
+
+        const indexToReplace = this.state.tasks.findIndex((task) => task.id === taskApi.id);
+
+        this.setState((prevState) => ({
+            tasks: prevState.tasks.map((task, i) => i === indexToReplace ? taskApi : task),
+        }));
         this._setTasksFetchingState(false);
     };
 
@@ -102,7 +109,9 @@ export default class Scheduler extends Component {
         try {
             this._setTasksFetchingState(true);
             await api.removeTask(id);
-            this.state.tasks = '';
+            this.setState((prevState) => ({
+                tasks: prevState.tasks.filter((task) => task.id !== id),
+            }));
             this._setTasksFetchingState(false);
         } catch (error) {
             console.error(error);
@@ -116,13 +125,18 @@ export default class Scheduler extends Component {
         if (notCompleted.length !== 0) {
             try {
                 this._setTasksFetchingState(true);
-                await api.completeAllTasks(notCompleted.map((task) => task.completed = true));
+                const completedTasks = notCompleted.map((task) => {
+                    task.completed = true;
+
+                    return task; // Без return ввернет масив свойств.
+                });
+
+                await api.completeAllTasks(completedTasks);
                 this.setState(({ tasks }) => ({
                     tasks: tasks.map((task) => {
                         task.completed = true;
 
-                        // Без return ввернет масив свойств.
-                        return task;
+                        return task; // Без return ввернет масив свойств.
                     }),
                 }));
                 this._setTasksFetchingState(false);
@@ -130,6 +144,19 @@ export default class Scheduler extends Component {
                 console.error(error);
             }
         } else {
+            //!Снимает все отметки выполнено
+            // this._setTasksFetchingState(true);
+            // await api.completeAllTasks(this.state.tasks.map((task) => task.completed = false));
+            // this.setState(({ tasks }) => ({
+            //     tasks: tasks.map((task) => {
+            //         task.completed = false;
+
+            //         // Без return ввернет масив свойств.
+            //         return task;
+            //     }),
+            // }));
+            // this._setTasksFetchingState(false);
+            //!
             return null;
         }
     };
@@ -179,6 +206,7 @@ export default class Scheduler extends Component {
                     </section>
                     <footer>
                         <Checkbox
+                            checked = { this._getAllCompleted() }
                             className = { Styles.completeAllTasks }
                             color1 = '#363636'
                             color2 = '#fff'

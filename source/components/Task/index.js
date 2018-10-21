@@ -1,5 +1,5 @@
 // Core
-import React, { PureComponent, createRef } from 'react';
+import React, { PureComponent } from 'react';
 
 // Instruments
 import Styles from './styles.m.css';
@@ -11,16 +11,15 @@ import Remove from "../../theme/assets/Remove";
 export default class Task extends PureComponent {
     constructor (props) {
         super(props);
-        this.taskInput = createRef();
+        this.taskInput = React.createRef();
     }
 
     state = {
         isTaskEditing: false,
-        newMessage:    '',
+        newMessage:    this.props.message,
         completed:     false,
-
     }
-    
+
     // * done
     _getTaskShape = ({
         id = this.props.id,
@@ -36,13 +35,15 @@ export default class Task extends PureComponent {
 
     // * done
     _setTaskEditingState = (isTaskEditing) => {
+        const input = this.taskInput.current;
+
         if (isTaskEditing) {
-            this.setState({
-                isTaskEditing,
-            });
-            this.taskInput.current.focus();
+            input.disabled = !isTaskEditing;
+            input.focus();
         }
-    }
+
+        this.setState({ isTaskEditing });
+    };
 
     // * done
     _updateNewTaskMessage = (event) => {
@@ -60,8 +61,8 @@ export default class Task extends PureComponent {
 
             return null;
         }
-        this._setTaskEditingState(false);
         this.props._updateTaskAsync(this._getTaskShape({ 'message': this.state.newMessage }));
+        this._setTaskEditingState(false);
     }
 
     // * done
@@ -127,11 +128,11 @@ export default class Task extends PureComponent {
                 <li className = { Styles.task }>
                     <div className = { Styles.content }>
                         <Checkbox
+                            inlineBlock
                             checked = { completed }
                             className = { Styles.toggleTaskCompletedState }
-                            color1 = '#3B8EF3'
-                            color2 = '#FFF'
-                            inlineBlock
+                            color1 = '#363636'
+                            color2 = '#fff'
                             onClick = { this._toggleTaskCompletedState }
                         />
                         <input

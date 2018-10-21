@@ -78,27 +78,28 @@ export const api = {
         }
     },
 
-    async completeAllTasks(tasks) {
-        const tasksFetched = tasks.map((task) => {
-            return fetch(`${MAIN_URL}`, {
+    //PUT Update todo Update todo text.
+    //Update completed field. Update favorite field.
+    async completeAllTasks (tasks) {
+        const tasksFetch = tasks.map((task) => {
+            return fetch(MAIN_URL, {
                 method:  'PUT',
                 headers: {
-                    Authorization:  TOKEN,
-                    'Content-Type': 'application/json',
+                    authorization:  TOKEN,
+                    'content-type': 'application/json',
                 },
                 body: JSON.stringify([task]),
             });
         });
 
-        await Promise.all(tasksFetched).then(
-            (resolve) => {
+        await Promise.all(tasksFetch)
+            .then((resolve) => {
                 resolve.forEach((response) => {
                     if (response.status !== 200) {
                         throw new Error('Task was not updated.');
                     }
                 });
-            },
-            (reject) => `Task was not updated, ${reject.message}`
-        );
+            })
+            .catch((error) => `Task was not updated, ${error.message}`);
     },
 };
