@@ -14,7 +14,6 @@ export default class Task extends PureComponent {
         _removeTaskAsync: func.isRequired,
         _updateTaskAsync: func.isRequired,
         completed:        bool.isRequired,
-        created:          string.isRequired,
         favorite:         bool.isRequired,
         id:               string.isRequired,
         message:          string.isRequired,
