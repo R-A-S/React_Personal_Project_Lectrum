@@ -18,9 +18,9 @@ afterEach(() => {
 
 describe('Компонент Task:', () => {
     describe('должен иметь базовую разметку JSX:', () => {
-        // describe('должен соответствовать снимку разметки', () => {
-        //     expect(result).toMatchSnapshot();
-        // });
+        describe('должен соответствовать снимку разметки', () => {
+            expect(result).toMatchSnapshot();
+        });
 
         describe('должен иметь свойство класса со ссылкой (ref) на элемент <input />:', () => {
             test('должно называться «taskInput»', () => {

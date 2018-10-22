@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import Styles from './styles.m.css';
 import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 import { sortTasksByGroup } from '../../instruments';
+import FlipMove from 'react-flip-move';
 
 // Components
 import Task from "../Task";
@@ -145,19 +146,17 @@ export default class Scheduler extends Component {
                 console.error(error);
             }
         } else {
-            //!Снимает все отметки выполнено
+            //!If need toggle complete all
             // this._setTasksFetchingState(true);
             // await api.completeAllTasks(this.state.tasks.map((task) => task.completed = false));
             // this.setState(({ tasks }) => ({
             //     tasks: tasks.map((task) => {
             //         task.completed = false;
-
-            //         // Без return ввернет масив свойств.
             //         return task;
             //     }),
             // }));
             // this._setTasksFetchingState(false);
-            //!
+            //!end If
             return null;
         }
     };
@@ -191,6 +190,7 @@ export default class Scheduler extends Component {
                     <section>
                         <form onSubmit = { this._createTaskAsync }>
                             <input
+                                className = 'createTask'
                                 maxLength = { 50 }
                                 placeholder = { 'Описaние моей новой задачи' }
                                 type = 'text'
@@ -201,16 +201,19 @@ export default class Scheduler extends Component {
                                 Добавить задачу
                             </button>
                         </form>
-                        <div>
+                        <div className = 'overlay' >
                             <ul>
-                                { tasksJSX }
+                                <FlipMove
+                                    duration = { 400 }
+                                    easing = { 'ease-in-out' }>
+                                    { tasksJSX }
+                                </FlipMove>
                             </ul>
                         </div>
                     </section>
                     <footer>
                         <Checkbox
                             checked = { this._getAllCompleted() }
-                            className = { Styles.completeAllTasks }
                             color1 = '#363636'
                             color2 = '#fff'
                             onClick = { this._completeAllTasksAsync }

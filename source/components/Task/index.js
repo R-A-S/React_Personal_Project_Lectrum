@@ -9,16 +9,13 @@ import Edit from "../../theme/assets/Edit";
 import Remove from "../../theme/assets/Remove";
 
 export default class Task extends PureComponent {
-    constructor (props) {
-        super(props);
-        this.taskInput = React.createRef();
-    }
-
     state = {
         isTaskEditing: false,
         newMessage:    this.props.message,
         completed:     false,
     }
+
+    taskInput = React.createRef();
 
     // * done
     _getTaskShape = ({
@@ -128,8 +125,8 @@ export default class Task extends PureComponent {
                             inlineBlock
                             checked = { completed }
                             className = { Styles.toggleTaskCompletedState }
-                            color1 = '#363636'
-                            color2 = '#fff'
+                            color1 = '#3B8EF3'
+                            color2 = '#FFF'
                             onClick = { this._toggleTaskCompletedState }
                         />
                         <input
