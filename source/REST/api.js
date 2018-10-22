@@ -64,7 +64,7 @@ export const api = {
     },
 
     //DELETE Delete todo
-    //DELETE https://lab.lectrum.io/hw/todo/api/{POST_ID}
+    //DELETE {MAIN_URL}/{POST_ID}
     async removeTask (id) {
         const response = await fetch(`${MAIN_URL}/${id}`, {
             method:  'DELETE',
@@ -100,6 +100,6 @@ export const api = {
                     }
                 });
             })
-            .catch((error) => `Task was not updated, ${error.message}`);
+            .catch((error) => `async completeAllTasks : ${error.message}`);
     },
 };

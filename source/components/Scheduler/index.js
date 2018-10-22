@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 // Instruments
 import Styles from './styles.m.css';
-import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
+import { api } from '../../REST';
 import { sortTasksByGroup } from '../../instruments';
 import FlipMove from 'react-flip-move';
 
@@ -24,7 +24,6 @@ export default class Scheduler extends Component {
         this._fetchTasksAsync();
     }
 
-    // * done
     _updateTasksFilter = (e) => {
         const { value } = e.target;
 
@@ -33,7 +32,6 @@ export default class Scheduler extends Component {
         });
     };
 
-    // * done
     _updateNewTaskMessage = (e) => {
         const { value: newTaskMessage } = e.target;
 
@@ -42,21 +40,20 @@ export default class Scheduler extends Component {
         });
     };
 
-    // * done
     _getAllCompleted = () => {
-        return this.state.tasks.every(
+        const { tasks } = this.state;
+
+        return tasks.every(
             (task) => task.completed
         );
     };
 
-    // * done
     _setTasksFetchingState = (isTasksFetching) => {
         this.setState({
             isTasksFetching,
         });
     };
 
-    // * done
     _fetchTasksAsync = async () => {
         try {
             this._setTasksFetchingState(true);
@@ -69,7 +66,6 @@ export default class Scheduler extends Component {
         }
     };
 
-    // * done
     _createTaskAsync = async (e) => {
         const { newTaskMessage } = this.state;
 
@@ -79,8 +75,8 @@ export default class Scheduler extends Component {
                 this._setTasksFetchingState(true);
                 const taskApi = await api.createTask(newTaskMessage);
 
-                this.setState((prevState) => ({
-                    tasks:          sortTasksByGroup([taskApi, ...prevState.tasks]),
+                this.setState(({ tasks }) => ({
+                    tasks:          sortTasksByGroup([taskApi, ...tasks]),
                     newTaskMessage: '',
                 }));
                 this._setTasksFetchingState(false);
@@ -92,41 +88,53 @@ export default class Scheduler extends Component {
         }
     };
 
-    // * done
     _updateTaskAsync = async (t) => {
+        const { tasks } = this.state;
+
         this._setTasksFetchingState(true);
 
         const taskApi = await api.updateTask(t);
 
-        const indexToReplace = this.state.tasks.findIndex((task) => task.id === taskApi.id);
+        const indexToReplace = tasks.findIndex(
+            (task) => task.id === taskApi.id
+        );
 
         this.setState((prevState) => ({
-            tasks: sortTasksByGroup(prevState.tasks.map((task, i) => i === indexToReplace ? taskApi : task)),
+            tasks: sortTasksByGroup(
+                prevState.tasks.map(
+                    (task, index) => index === indexToReplace
+                        ? taskApi
+                        : task
+                )),
         }));
+
         this._setTasksFetchingState(false);
     };
 
-    // * done
     _removeTaskAsync = async (id) => {
         try {
             this._setTasksFetchingState(true);
+
             await api.removeTask(id);
             this.setState((prevState) => ({
                 tasks: prevState.tasks.filter((task) => task.id !== id),
             }));
+
             this._setTasksFetchingState(false);
+
         } catch (error) {
             console.error(error);
         }
     };
 
-    // * done
     _completeAllTasksAsync = async () => {
-        const notCompleted = this.state.tasks.filter((task) => !task.completed);
+        const { tasks } = this.state;
+        const notCompleted = tasks.filter((task) => !task.completed);
 
         if (notCompleted.length !== 0) {
             try {
                 this._setTasksFetchingState(true);
+
                 const completedTasks = notCompleted.map((task) => {
                     task.completed = true;
 
@@ -134,19 +142,22 @@ export default class Scheduler extends Component {
                 });
 
                 await api.completeAllTasks(completedTasks);
-                this.setState(({ tasks }) => ({
-                    tasks: tasks.map((task) => {
+                this.setState((prevState) => ({
+                    tasks: prevState.tasks.map((task) => {
                         task.completed = true;
 
                         return task; // Без return ввернет масив свойств.
                     }),
                 }));
+
                 this._setTasksFetchingState(false);
+
             } catch (error) {
                 console.error(error);
             }
+
         } else {
-            //!If need toggle complete all
+            //*If need toggle complete all
             // this._setTasksFetchingState(true);
             // await api.completeAllTasks(this.state.tasks.map((task) => task.completed = false));
             // this.setState(({ tasks }) => ({
@@ -156,15 +167,18 @@ export default class Scheduler extends Component {
             //     }),
             // }));
             // this._setTasksFetchingState(false);
-            //!end If
+
             return null;
         }
     };
 
     render () {
         const { newTaskMessage, tasksFilter, isTasksFetching, tasks } = this.state;
-        const tasksJSX = tasks.filter((task) => task.message.toLocaleLowerCase()
-            .includes(tasksFilter))
+
+        const tasksJSX = tasks.filter(
+            (task) => task.message.toLocaleLowerCase()
+                .includes(tasksFilter)
+        )
             .map((task) => (
                 <Task
                     key = { task.id }
@@ -206,6 +220,27 @@ export default class Scheduler extends Component {
                                 <FlipMove
                                     duration = { 400 }
                                     easing = { 'ease-in-out' }>
+                                    {/*
+                                    Красивые настройки анимации, не подходит для snapshot
+                                    enterAnimation = { {
+                                        from: {
+                                            transform: 'rotateX(180deg)',
+                                            opacity:   0.1,
+                                        },
+                                        to: {
+                                            transform: '',
+                                        },
+                                    } }
+                                    leaveAnimation = { {
+                                        from: {
+                                            transform: '',
+                                        },
+                                        to: {
+                                            transform: 'rotateX(-120deg)',
+                                            opacity:   0.1,
+                                        },
+                                    } }
+                                    staggerDelayBy = { 100 }*/}
                                     { tasksJSX }
                                 </FlipMove>
                             </ul>
