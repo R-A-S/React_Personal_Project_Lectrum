@@ -70,7 +70,7 @@ export default class Scheduler extends Component {
         const { newTaskMessage } = this.state;
 
         e.preventDefault();
-        if (newTaskMessage.trim() !== '') {
+        if (newTaskMessage.trim()) {
             try {
                 this._setTasksFetchingState(true);
                 const taskApi = await api.createTask(newTaskMessage);

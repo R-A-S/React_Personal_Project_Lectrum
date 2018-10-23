@@ -75,7 +75,7 @@ export default class Task extends PureComponent {
         const { isTaskEditing, newMessage } = this.state;
 
         if (isTaskEditing) {
-            if (newMessage.trim() !== '') {
+            if (newMessage.trim()) {
                 this._updateTask();
 
                 return null;
@@ -96,7 +96,7 @@ export default class Task extends PureComponent {
     _updateTaskMessageOnKeyDown = (event) => {
         const { newMessage } = this.state;
 
-        if (newMessage.trim() !== '') {
+        if (newMessage.trim()) {
 
             if (event.key === 'Enter') {
                 this._updateTask();
