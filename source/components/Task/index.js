@@ -4,9 +4,9 @@ import React, { PureComponent } from 'react';
 // Instruments
 import Styles from './styles.m.css';
 import Checkbox from '../../theme/assets/Checkbox';
-import Star from "../../theme/assets/Star";
-import Edit from "../../theme/assets/Edit";
-import Remove from "../../theme/assets/Remove";
+import Star from '../../theme/assets/Star';
+import Edit from '../../theme/assets/Edit';
+import Remove from '../../theme/assets/Remove';
 import { string, bool, func } from 'prop-types';
 
 export default class Task extends PureComponent {
@@ -76,9 +76,7 @@ export default class Task extends PureComponent {
 
         if (isTaskEditing) {
             if (newMessage.trim()) {
-                this._updateTask();
-
-                return null;
+                this._cancelUpdatingTaskMessage();
             }
         }
         this._setTaskEditingState(true);
@@ -113,7 +111,7 @@ export default class Task extends PureComponent {
         const { _updateTaskAsync, completed } = this.props;
 
         _updateTaskAsync(
-            this._getTaskShape({ 'completed': !completed })
+            this._getTaskShape({ completed: !completed })
         );
     }
 

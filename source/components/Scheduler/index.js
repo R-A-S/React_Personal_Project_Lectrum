@@ -8,7 +8,7 @@ import { sortTasksByGroup } from '../../instruments';
 import FlipMove from 'react-flip-move';
 
 // Components
-import Task from "../Task";
+import Task from '../Task';
 import Checkbox from '../../theme/assets/Checkbox';
 import Spinner from './../Spinner';
 
@@ -138,7 +138,7 @@ export default class Scheduler extends Component {
                 const completedTasks = notCompleted.map((task) => {
                     task.completed = true;
 
-                    return task; // Без return ввернет масив свойств.
+                    return task; // Без return ввернет массив свойств.
                 });
 
                 await api.completeAllTasks(completedTasks);
@@ -146,7 +146,7 @@ export default class Scheduler extends Component {
                     tasks: prevState.tasks.map((task) => {
                         task.completed = true;
 
-                        return task; // Без return ввернет масив свойств.
+                        return task; // Без return ввернет массив свойств.
                     }),
                 }));
 
@@ -206,7 +206,7 @@ export default class Scheduler extends Component {
                             <input
                                 className = 'createTask'
                                 maxLength = { 50 }
-                                placeholder = { 'Описaние моей новой задачи' }
+                                placeholder = { 'Описание моей новой задачи' }
                                 type = 'text'
                                 value = { newTaskMessage }
                                 onChange = { this._updateNewTaskMessage }
@@ -219,9 +219,7 @@ export default class Scheduler extends Component {
                             <ul>
                                 <FlipMove
                                     duration = { 400 }
-                                    easing = { 'ease-in-out' }>
-                                    {/*
-                                    Красивые настройки анимации, не подходит для snapshot
+                                    easing = { 'ease-in-out' }
                                     enterAnimation = { {
                                         from: {
                                             transform: 'rotateX(180deg)',
@@ -240,7 +238,7 @@ export default class Scheduler extends Component {
                                             opacity:   0.1,
                                         },
                                     } }
-                                    staggerDelayBy = { 100 }*/}
+                                    staggerDelayBy = { 100 }>
                                     { tasksJSX }
                                 </FlipMove>
                             </ul>
